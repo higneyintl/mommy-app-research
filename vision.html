@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The App — A Vision Document</title>
+<style>
+  :root {
+    --rose: #c94f6d;
+    --gold: #c09a5a;
+    --sage: #5a9e7c;
+    --navy: #1c2b4a;
+    --cream: #fdf6f0;
+    --card: #ffffff;
+    --text: #2d2d2d;
+    --text2: #5a6070;
+    --border: #eae3da;
+    --lavender: #8b7fd4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: var(--cream);
+    color: var(--text);
+    line-height: 1.8;
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--navy);
+    color: white;
+    padding: 80px 40px 60px;
+    text-align: center;
+  }
+  .hero .label {
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 20px;
+    color: white;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero .sub {
+    font-size: 18px;
+    color: rgba(255,255,255,0.65);
+    max-width: 560px;
+    margin: 0 auto 32px;
+    font-family: -apple-system, sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+  }
+  .hero .meta {
+    font-family: -apple-system, sans-serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* BODY */
+  .doc {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 60px 32px 100px;
+  }
+
+  /* SECTIONS */
+  .section { margin-bottom: 56px; }
+
+  .section-label {
+    font-family: -apple-system, sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--rose);
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    font-size: clamp(24px, 4vw, 34px);
+    font-weight: 400;
+    color: var(--navy);
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  h3 {
+    font-family: -apple-system, sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 32px 0 10px;
+  }
+
+  p {
+    font-size: 17px;
+    line-height: 1.85;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+
+  ul {
+    margin: 0 0 18px 20px;
+  }
+  li {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  /* PULL QUOTE */
+  .pull {
+    border-left: 3px solid var(--gold);
+    padding: 18px 24px;
+    margin: 32px 0;
+    background: white;
+    border-radius: 0 10px 10px 0;
+  }
+  .pull p {
+    font-size: 19px;
+    font-style: italic;
+    color: var(--navy);
+    margin: 0;
+    line-height: 1.6;
+  }
+  .pull cite {
+    display: block;
+    font-size: 13px;
+    font-style: normal;
+    font-family: -apple-system, sans-serif;
+    color: var(--text2);
+    margin-top: 10px;
+  }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin: 28px 0;
+  }
+  .highlight.gold { border-left: 4px solid var(--gold); }
+  .highlight.rose { border-left: 4px solid var(--rose); }
+  .highlight.sage { border-left: 4px solid var(--sage); }
+  .highlight h4 {
+    font-family: -apple-system, sans-serif;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .highlight.rose h4 { color: var(--rose); }
+  .highlight.sage h4 { color: var(--sage); }
+  .highlight p { margin-bottom: 0; font-size: 16px; }
+
+  /* SCREEN MOCKUP */
+  .phone-frame {
+    background: var(--navy);
+    border-radius: 32px;
+    padding: 28px 24px;
+    margin: 32px auto;
+    max-width: 340px;
+    color: white;
+    font-family: -apple-system, sans-serif;
+    position: relative;
+  }
+  .phone-frame::before {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .phone-frame .screen-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .phone-frame .greeting {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 4px;
+  }
+  .phone-frame .date {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+  }
+  .phone-frame .sub-date {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 20px;
+  }
+  .phone-frame .item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.9);
+  }
+  .phone-frame .item .check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    flex-shrink: 0;
+  }
+  .phone-frame .item.done .check {
+    background: var(--sage);
+    border-color: var(--sage);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+  }
+  .phone-frame .prayer-card {
+    background: rgba(192,154,90,0.15);
+    border: 1px solid rgba(192,154,90,0.4);
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 12px;
+    font-size: 13px;
+    font-style: italic;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+  }
+  .phone-frame .prayer-card .prayer-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gold);
+    margin-bottom: 8px;
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  /* FEATURE GRID */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .feature-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+  }
+  .feature-card .icon { font-size: 28px; margin-bottom: 10px; }
+  .feature-card h4 {
+    font-family: -apple-system, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .feature-card p { font-size: 14px; line-height: 1.6; margin: 0; color: var(--text2); }
+
+  /* PRICING */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .price-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 20px;
+    text-align: center;
+    font-family: -apple-system, sans-serif;
+  }
+  .price-card.featured {
+    border-color: var(--rose);
+    background: linear-gradient(135deg, #fff5f7, white);
+    position: relative;
+  }
+  .price-card.featured::before {
+    content: 'RECOMMENDED';
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--rose);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 3px 12px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .price-card .tier { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); margin-bottom: 8px; }
+  .price-card .amount { font-size: 32px; font-weight: 800; color: var(--navy); line-height: 1; margin-bottom: 4px; }
+  .price-card .period { font-size: 13px; color: var(--text2); margin-bottom: 16px; }
+  .price-card ul { list-style: none; padding: 0; margin: 0; text-align: left; }
+  .price-card li { font-size: 13px; color: var(--text); padding: 5px 0; border-bottom: 1px solid var(--border); }
+  .price-card li:last-child { border: none; }
+  .price-card li::before { content: '✓ '; color: var(--sage); font-weight: 700; }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  /* CLOSING */
+  .closing {
+    background: var(--navy);
+    color: white;
+    padding: 60px 40px;
+    text-align: center;
+    margin-top: 0;
+  }
+  .closing h2 { color: white; font-size: 28px; margin-bottom: 16px; }
+  .closing p { color: rgba(255,255,255,0.7); font-size: 17px; max-width: 500px; margin: 0 auto 8px; font-family: -apple-system, sans-serif; }
+  .closing .sig { color: var(--gold); margin-top: 24px; font-size: 14px; font-family: -apple-system, sans-serif; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 60px 24px 48px; }
+    .doc { padding: 40px 20px 80px; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .highlight { padding: 20px; }
+    .pull { padding: 14px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="label">Product Vision · March 2026</div>
+  <h1>The App That <em>Stays</em><br>With Her</h1>
+  <p class="sub">A vision for a faith-based, natural-minded daily companion — for pregnancy, birth, and the season nobody talks about after.</p>
+  <p class="meta">Prepared by Ava Sinclaire · Higney International · Confidential</p>
+</div>
+
+<!-- BODY -->
+<div class="doc">
+
+  <!-- THE PROBLEM -->
+  <div class="section">
+    <div class="section-label">The Problem</div>
+    <h2>Every App Abandons Her</h2>
+    <p>There are over twenty pregnancy apps on the market. They are downloaded millions of times a year. And almost every single one does the same thing: they dump information on her, push her into forums with 80,000 strangers, and then — the moment her baby is born — they disappear.</p>
+    <p>The apps that don't disappear pivot to tracking the <em>baby</em>. Feeds. Diapers. Sleep schedules. Which is useful. But nobody asks how <em>she</em> is doing. Nobody gives her a simple guide for Day 3 postpartum, when her milk is coming in and she's crying for reasons she can't explain and her body feels like a stranger's.</p>
+
+    <div class="pull">
+      <p>"During pregnancy, we're cared for and monitored. But once we give birth, it's like the world forgets us."</p>
+      <cite>— Reddit, r/beyondthebump (one of thousands of similar posts)</cite>
+    </div>
+
+    <p>There's a second problem: the women who are most underserved aren't the ones without options. They're the ones with values. The natural-minded mom who researches everything, who's making intentional choices about birth and feeding and what she puts in her body. The faith-based mom who prays over her pregnancy and wants an app that acknowledges God's design for this experience — not one that treats her faith like a quirky sidebar.</p>
+    <p>These women have no app. They piece together Instagram accounts, email newsletters, Facebook groups, and books. Something better is long overdue.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- THE MARKET -->
+  <div class="section">
+    <div class="section-label">The Opportunity</div>
+    <h2>A Market Hiding in Plain Sight</h2>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon">✝️</div>
+        <h4>2.3 Million</h4>
+        <p>Christian moms born in the US every year. Zero mainstream apps meaningfully serve them. Faith-based apps (Hallow, Pray.com) have proven this audience will pay for values-aligned digital products.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🌿</div>
+        <h4>500K–900K</h4>
+        <p>Natural/crunchy moms per year in the US. Mama Natural's website gets 2 million monthly visitors — with no app. That's demand with nowhere to go.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">💔</div>
+        <h4>Every App Fails Postpartum</h4>
+        <p>Every single pregnancy app earns a C or lower grade for postpartum support. The fourth trimester is the biggest gap in the entire market.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📈</div>
+        <h4>$357M → $1.38B</h4>
+        <p>The pregnancy app market is growing at 18.4% per year. The intersection of faith + natural + postpartum is wide open. No one owns it.</p>
+      </div>
+    </div>
+
+    <div class="highlight gold">
+      <h4>The Unoccupied Territory</h4>
+      <p>Faith-based + Natural/Crunchy + Postpartum Daily Guide = <strong>zero apps exist here.</strong> This isn't a gap. It's a chasm.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- THE NAME -->
+  <div class="section">
+    <div class="section-label">Identity</div>
+    <h2>What We'd Call It</h2>
+    <p>The name can't sound clinical. Not "PregnancyTrack Pro." Not "MomWell." Something warm, intimate, personal — the kind of name she'd whisper to a friend, not see on a medical brochure.</p>
+    <p><strong>Rooted.</strong> As in rooted in faith. Rooted in her body. Rooted in who she's becoming as a mother. Or <strong>Tend</strong> — the act of caring for something precious and growing. The name matters because this woman chooses her brands the same way she chooses her church and her midwife: with her whole self.</p>
+
+    <div class="pull">
+      <p>"You are not a patient. You are a woman doing the most sacred, demanding, transformative thing a human being can do. You deserve a companion — not a manual."</p>
+      <cite>— The core philosophy this app is built on</cite>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- DAILY EXPERIENCE -->
+  <div class="section">
+    <div class="section-label">Core Experience</div>
+    <h2>The Home Screen Is Called "Today"</h2>
+    <p>The single most important insight from our research: <strong>moms want to know what to do today.</strong> Not forty articles. Not a forum full of strangers. Just — open the app, see my day, do the things, close it.</p>
+    <p>Every competitor has missed this. Every single one. They've built information archives when what women are begging for is a simple daily guide.</p>
+    <p>When she opens the app, she sees her name, her week, a single gentle line about where her baby is right now. And then — her day:</p>
+
+    <!-- PHONE MOCKUP -->
+    <div class="phone-frame">
+      <div class="screen-label">Today</div>
+      <div class="greeting">Good morning, Shameen 🌅</div>
+      <div class="date">Week 31, Day 4</div>
+      <div class="sub-date">Baby weighs ~3.3 lbs · 🥥 Coconut</div>
+
+      <div class="item done">
+        <div class="check">✓</div>
+        Prenatal vitamin
+      </div>
+      <div class="item">
+        <div class="check"></div>
+        80oz water today
+      </div>
+      <div class="item">
+        <div class="check"></div>
+        Protein goal — 75g
+      </div>
+      <div class="item">
+        <div class="check"></div>
+        Pelvic tilts · Hip circles
+      </div>
+
+      <div class="prayer-card">
+        <div class="prayer-label">🙏 Today's Prayer</div>
+        "Lord, as my body works harder each day, remind me that I was made for this. Give me rest that restores, not just sleep that passes time."
+      </div>
+    </div>
+
+    <p>That's it. Five things and a prayer. She's done in 60 seconds — or she lingers. Her choice. No algorithm dragging her deeper. No ads. No drama. Just her day.</p>
+
+    <h3>Today's Prayer & Verse — Written for Her Week</h3>
+    <p>This is the feature that will get screenshotted and texted to friends more than anything else in the app. Not because it's innovative — because it's <em>specific</em>.</p>
+    <p>Week 31 brings exhaustion, Braxton Hicks, the nesting instinct, and the first real anxiety about labor. The prayer should speak to <em>that</em> — not offer a generic "bless this pregnancy" placeholder. Isaiah 40:31. Psalm 139. Written like a friend who actually knows what week 31 feels like.</p>
+
+    <div class="highlight rose">
+      <h4>Day 3 Postpartum Prayer (example)</h4>
+      <p style="font-style:italic; color:#444">"God, I am undone. And I think that might be okay. You put yourself into a vulnerable body too. Hold me here."</p>
+      <p style="margin-top:10px; font-size:14px; color:var(--text2)">She will screenshot this at 3am and text it to her mom. That's word-of-mouth that no ad budget can buy.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FOUR SPACES -->
+  <div class="section">
+    <div class="section-label">App Structure</div>
+    <h2>Four Spaces</h2>
+
+    <h3>1. Today — The Daily Guide</h3>
+    <p>The home screen. Daily actions, prayer, verse, encouragement. Reviewed in 60 seconds. This is where she opens every morning.</p>
+
+    <h3>2. My Journey — Her Personal Record</h3>
+    <p>Weekly reflection prompts. Symptom log. Mood check-ins — not a clinical PHQ-9 form, just: how are you feeling, really? A beautiful scrollable timeline she can look back on. This becomes her pregnancy memoir without her realizing it.</p>
+
+    <h3>3. The Guide — Content Library</h3>
+    <p>Information lives here — but she comes to it when she <em>wants</em> to, not because the app shoves articles at her. Three key sections:</p>
+    <ul>
+      <li><strong>Birth Your Way</strong> — hospital, birth center, and homebirth covered with equal depth and zero judgment</li>
+      <li><strong>Natural Living</strong> — elimination communication, cloth diapering, babywearing, herbal pregnancy support, non-toxic home, clean feeding</li>
+      <li><strong>Faith & Motherhood</strong> — devotionals, testimonies from believing moms, the sacred narrative of birth (not just the pain-as-curse narrative)</li>
+    </ul>
+
+    <h3>4. Circle — Her Community</h3>
+    <p>This is not a forum. This is not 80,000 strangers. She gets placed in a group of 30–50 women due the same month, with similar values — natural-minded, faith-based. That's her Circle.</p>
+    <ul>
+      <li>One conversation prompt per day — not an open feed</li>
+      <li>Prayer request wall — anonymous posting, others pray without responding</li>
+      <li>Milestone celebrations — when someone's baby arrives, the whole Circle celebrates</li>
+      <li>After birth, the Circle transitions together into postpartum — same women, same bonds, now navigating new motherhood side by side</li>
+    </ul>
+
+    <div class="highlight sage">
+      <h4>Why Circle Works</h4>
+      <p>BabyCenter's forums have 80,000 members per birth month and are rated 1.8 stars for toxicity. Peanut — the most loved community app — works because it's small and intentional. A values-aligned Circle of 30–50 women is not a feature. It becomes the reason she never deletes the app.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- POSTPARTUM -->
+  <div class="section">
+    <div class="section-label">The Differentiator</div>
+    <h2>Postpartum — Where This App Earns Its Stripes</h2>
+    <p>This is the part no other app does. This is the moat.</p>
+    <p>The moment she enters her birth date, the app transforms. Not a hard pivot — a gentle transition. The pregnancy tracker doesn't just shut off. It honors what just happened:</p>
+
+    <div class="highlight gold">
+      <h4>The Transition Screen</h4>
+      <p style="font-style:italic">"Baby [Name] was born on [Date]. You did something extraordinary. Now let's take care of you."</p>
+    </div>
+
+    <p>The postpartum home screen is still called "Today" — but the content shifts entirely to <em>her</em> recovery. Day 3 might look like this:</p>
+
+    <div class="phone-frame">
+      <div class="screen-label">Today · Postpartum</div>
+      <div class="greeting">Day 3 — You're doing it 💛</div>
+      <div class="sub-date" style="font-size:13px; line-height:1.5; margin-bottom:20px; color:rgba(255,255,255,0.55)">Your milk is likely coming in. Your body is doing something remarkable and uncomfortable at the same time.</div>
+
+      <div class="item">
+        <div class="check"></div>
+        Water — 100oz (breastfeeding)
+      </div>
+      <div class="item">
+        <div class="check"></div>
+        Eat something warm + nourishing
+      </div>
+      <div class="item">
+        <div class="check"></div>
+        Peri bottle rinse ×3
+      </div>
+      <div class="item">
+        <div class="check"></div>
+        Rest — lie down, even briefly
+      </div>
+      <div class="item">
+        <div class="check"></div>
+        Let someone else hold baby 20 min
+      </div>
+    </div>
+
+    <h3>"What's Normal" — The Feature Nobody Built</h3>
+    <p>Week by week, day by day: what is normal right now, and what isn't. Not as a clinical checklist — as honest, compassionate information delivered like a doula friend who's seen it all.</p>
+    <p><em>"Week 1: Heavy bleeding is normal. Large clots (golf ball size or larger) are not — call your provider. Night sweats are normal. Feeling weepy and overwhelmed is normal. Feeling nothing is also normal."</em></p>
+    <p>She will read this at 3am, alone, scared. And she will feel less alone. That is the entire purpose of this feature.</p>
+
+    <h3>Postpartum Daily Guide: 90 Days + First Year</h3>
+    <p>The guide runs day-by-day for the first 90 days — then weekly through baby's first year. Baby tracking exists, but it is not the center. The app's opening question is always about <em>her</em>, not the baby. Baby gets a card. Mom gets the whole screen.</p>
+
+    <div class="pull">
+      <p>"We're expected to recover and bounce back as if nothing happened. I don't know how my body is supposed to feel."</p>
+      <cite>— Reddit, r/postpartumprogress</cite>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FAITH -->
+  <div class="section">
+    <div class="section-label">Core DNA</div>
+    <h2>Faith Woven In — Not Bolted On</h2>
+    <p>The easiest mistake to make: treating faith like a feature. A toggle. "Turn on Christian mode." That's not it.</p>
+    <p>Faith should be the DNA of how the app speaks. The language. The framing of birth as sacred, not merely medical. The acknowledgment that this baby was prayed for. That her body is not a machine — it's a temple doing holy work.</p>
+
+    <h3>What That Looks Like in Practice</h3>
+    <ul>
+      <li>Onboarding asks about faith background and adjusts the entire tone of the app — not just swapping one word</li>
+      <li>Week 20 anatomy scan: <em>"Today you might see the face God has been designing. Psalm 139:13–14. Go in with open hands."</em></li>
+      <li>Postpartum depression is addressed with both practical guidance and spiritual honesty: <em>"The darkness after birth is real. It is not a spiritual failure. The Psalms are full of people in exactly this place."</em></li>
+      <li>The prayer wall in Circle is the most-used feature — faith-based community apps consistently find prayer touchpoints drive the highest engagement</li>
+      <li>Content never condescends or qualifies faith. It simply speaks from it.</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- NATURAL -->
+  <div class="section">
+    <div class="section-label">Content Philosophy</div>
+    <h2>Natural/Crunchy as the Default — Not the Exception</h2>
+    <p>The app speaks natural by default. If she wants information about conventional options, it's available — but this app doesn't center it.</p>
+
+    <h3>Content That Exists Nowhere Else</h3>
+    <ul>
+      <li><strong>Elimination Communication (EC)</strong> — a full, proper guide based on Andrea Olson's framework. The only app to ever cover this.</li>
+      <li><strong>Babywearing</strong> — carries, wraps, safety, benefits — integrated as a standard parenting approach</li>
+      <li><strong>Natural birth preparation</strong> — hypnobirthing, breathing, positions, water birth, what to expect in each birth setting</li>
+      <li><strong>Traditional postpartum healing</strong> — the 40-day rest, bone broth, belly binding, sitz baths — featured as wisdom that predates modern medicine, not as "alternative"</li>
+      <li><strong>Clean living through pregnancy</strong> — non-toxic nursery, organic food guidance, what to avoid</li>
+    </ul>
+
+    <div class="highlight rose">
+      <h4>On Vaccines</h4>
+      <p>The app says nothing. Literally nothing. No CDC schedule. No "consult your pediatrician about vaccines." Complete silence. She can look that up elsewhere. This app is not touching it — and that silence will speak louder to her than anything else. She'll notice. She'll trust.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- MVP -->
+  <div class="section">
+    <div class="section-label">Build Strategy</div>
+    <h2>What We Build First</h2>
+    <p>Not everything. Just this. Ship it fast, let the moms tell us what to build next.</p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon">👋</div>
+        <h4>Onboarding</h4>
+        <p>Name, due date, faith background, parenting style. Two minutes max. Sets the tone for everything.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">☀️</div>
+        <h4>Today Screen</h4>
+        <p>Daily guide — 3 daily actions + one prayer + one verse. The whole value proposition in one screen.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📅</div>
+        <h4>Week-by-Week Guide</h4>
+        <p>Natural/faith lens throughout pregnancy. Content that sounds like a knowledgeable friend, not a medical pamphlet.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">👶</div>
+        <h4>Milestone Tracking</h4>
+        <p>One-tap milestone completions. Beautiful, simple pregnancy timeline she builds without trying.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🌸</div>
+        <h4>Circle (v1)</h4>
+        <p>30–50 women, due same month, values-aligned. One daily prompt. Prayer request wall. That's it for now.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">💛</div>
+        <h4>Postpartum Transition</h4>
+        <p>Day-by-day guide starting at birth. The feature that makes her tell everyone she knows about this app.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PRICING -->
+  <div class="section">
+    <div class="section-label">Business Model</div>
+    <h2>Pricing Built for the Journey</h2>
+    <p>Pregnancy has a beginning and an end. The first year has a beginning and an end. Moms shouldn't feel like they're paying a subscription for something they'll naturally outgrow. The pricing honors the finite nature of the journey.</p>
+
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="tier">Free</div>
+        <div class="amount">$0</div>
+        <div class="period">always</div>
+        <ul>
+          <li>3 daily actions</li>
+          <li>Basic pregnancy tracking</li>
+          <li>Baby size visuals</li>
+          <li>Circle community access</li>
+          <li>Weekly education content</li>
+        </ul>
+      </div>
+      <div class="price-card featured">
+        <div class="tier">Annual</div>
+        <div class="amount">$39.99</div>
+        <div class="period">per year</div>
+        <ul>
+          <li>Full daily guide (5 items)</li>
+          <li>All prayers + devotionals</li>
+          <li>Complete postpartum guide</li>
+          <li>Natural/crunchy library</li>
+          <li>Partner sharing view</li>
+          <li>"What's Normal" section</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <div class="tier">Lifetime</div>
+        <div class="amount">$79.99</div>
+        <div class="period">one time</div>
+        <ul>
+          <li>Everything in Annual</li>
+          <li>Pregnancy + first year</li>
+          <li>No recurring charges</li>
+          <li>Future features included</li>
+          <li>Supports the mission</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>Below the $50–60/year threshold where subscription backlash starts. Lifetime at $79.99 feels generous and honest — it aligns with the natural end of the journey. She pays once, she's covered. This builds the kind of loyalty that makes her recommend the app to every pregnant woman she meets for the rest of her life.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- WHY SHE TELLS FRIENDS -->
+  <div class="section">
+    <div class="section-label">Growth</div>
+    <h2>Why She Tells Her Friends</h2>
+    <p>Word-of-mouth is everything in this community. Here's what gets shared:</p>
+
+    <ul>
+      <li><strong>The prayers.</strong> She screenshots them. She texts them to her mom, her sister, her best friend who's also pregnant. These go viral within friend groups — no ad budget required.</li>
+      <li><strong>"What's Normal."</strong> She reads it at 3am, scared and alone. It calms her down. She immediately shares it with her postpartum group chat.</li>
+      <li><strong>Her Circle.</strong> "I have this group of 30 moms all due in May — we pray for each other and they just get it." That's not an app feature. That's a relationship. She'll talk about it for years.</li>
+      <li><strong>The birth plan section.</strong> She shows her husband what she built. He finally understands what she wants from birth. Her doula asks what app it's from. Her OB asks to see it.</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PHASES -->
+  <div class="section">
+    <div class="section-label">The Journey</div>
+    <h2>Three Seasons</h2>
+    <p>She's not just a "pregnant person" or a "new mom." She's moving through something. The app names it.</p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon">🌱</div>
+        <h4>Growing Season</h4>
+        <p>Pregnancy. Week-by-week. Daily actions phase in as her body grows. Content deepens as she does.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🌊</div>
+        <h4>The Threshold</h4>
+        <p>Birth. The app honors it. Marks it. Doesn't rush through it like a checkbox.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🌸</div>
+        <h4>The Fourth Trimester</h4>
+        <p>Postpartum — then The First Year. Day-by-day guidance for the season everyone else abandons her.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /doc -->
+
+<!-- CLOSING -->
+<div class="closing">
+  <h2>The App That Was Always Missing</h2>
+  <p>The version of this described in this document doesn't exist anywhere. The research confirmed it. The market data confirms it. The Reddit threads full of women asking "why does every app abandon me after birth?" confirm it.</p>
+  <p style="margin-top:16px">The woman building it should be someone who has actually lived this pregnancy — who has prayed over her baby, made intentional crunchy choices, and is seven weeks from the postpartum experience that will shape every feature of this product.</p>
+  <p class="sig">Prepared with 🖤 by Ava Sinclaire · March 2026</p>
+</div>
+
+</body>
+</html>
