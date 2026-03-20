@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mommy App — Competitive Research</title>
+<style>
+  :root {
+    --rose: #c94f6d;
+    --gold: #c09a5a;
+    --sage: #5a9e7c;
+    --navy: #1c2b4a;
+    --cream: #fdf6f0;
+    --card: #ffffff;
+    --text: #2d2d2d;
+    --text2: #5a6070;
+    --border: #eae3da;
+    --lavender: #8b7fd4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+  .deck { width: 100%; height: 100vh; position: relative; }
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    background: var(--cream);
+    overflow: hidden;
+  }
+  .slide.active { display: flex; }
+
+  /* NAV */
+  .nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    z-index: 100;
+    gap: 12px;
+  }
+  .nav button {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+  }
+  .nav button:hover { background: rgba(255,255,255,0.2); }
+  .nav button:disabled { opacity: 0.3; cursor: default; }
+  .nav-counter { color: rgba(255,255,255,0.6); font-size: 13px; }
+  .nav-dots {
+    display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+    max-width: 60%;
+  }
+  .nav-dots span {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-dots span.active { background: var(--gold); }
+
+  /* SLIDE CONTENT */
+  .slide-inner {
+    flex: 1;
+    overflow-y: auto;
+    padding: 40px 48px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* TITLE SLIDE */
+  .slide-title {
+    background: var(--navy);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-title .slide-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+  .slide-title h1 {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    color: white;
+    line-height: 1.1;
+  }
+  .slide-title h1 span { color: var(--gold); }
+  .slide-title p {
+    font-size: 18px;
+    color: rgba(255,255,255,0.7);
+    max-width: 600px;
+    line-height: 1.6;
+  }
+  .slide-title .meta {
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 12px;
+  }
+  .badge {
+    background: rgba(192,154,90,0.2);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+  }
+
+  /* STANDARD SLIDES */
+  .slide-header {
+    background: var(--navy);
+    padding: 24px 48px 20px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .slide-header .slide-num {
+    font-size: 12px;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .slide-header h2 {
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 700;
+    color: white;
+  }
+  .slide-header p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    margin-top: 4px;
+  }
+
+  /* TYPOGRAPHY */
+  h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin: 24px 0 10px; }
+  h4 { font-size: 15px; font-weight: 600; color: var(--rose); margin: 16px 0 8px; }
+  p { font-size: 15px; line-height: 1.7; color: var(--text); margin-bottom: 12px; }
+  ul { padding-left: 20px; margin-bottom: 12px; }
+  li { font-size: 15px; line-height: 1.7; color: var(--text); margin-bottom: 4px; }
+  strong { color: var(--navy); }
+  blockquote {
+    border-left: 3px solid var(--rose);
+    padding: 10px 16px;
+    background: #fff5f7;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text2);
+  }
+
+  /* CARDS */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin: 16px 0; }
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .card h4 { margin: 0 0 8px; font-size: 15px; color: var(--navy); }
+  .card p, .card li { font-size: 14px; }
+  .card .rating { font-size: 13px; color: var(--gold); margin-bottom: 6px; }
+  .card .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin: 2px;
+    font-weight: 600;
+  }
+  .tag-free { background: #e8f5e9; color: #2e7d32; }
+  .tag-paid { background: #fff3e0; color: #e65100; }
+  .tag-sub { background: #e3f2fd; color: #1565c0; }
+  .tag-gap { background: #fce4ec; color: #c62828; }
+
+  /* TABLE */
+  .tbl-wrap { overflow-x: auto; margin: 16px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--navy); color: white; padding: 10px 12px; text-align: left; font-weight: 600; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: #faf7f4; }
+  tr:hover td { background: #f5ede4; }
+
+  /* STAT BOXES */
+  .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin: 20px 0; }
+  .stat-box {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .stat-box .num {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--rose);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-box .label { font-size: 13px; color: var(--text2); line-height: 1.4; }
+
+  /* GAP BOX */
+  .gap-box {
+    background: linear-gradient(135deg, #1c2b4a, #2d4a7a);
+    color: white;
+    border-radius: 16px;
+    padding: 28px;
+    margin: 20px 0;
+    text-align: center;
+  }
+  .gap-box h3 { color: var(--gold); font-size: 20px; margin-bottom: 12px; }
+  .gap-box p { color: rgba(255,255,255,0.85); font-size: 15px; }
+  .gap-box .cross { font-size: 48px; margin-bottom: 8px; }
+
+  /* ALERT BOX */
+  .alert {
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .alert-red { background: #fce4ec; border-left: 4px solid var(--rose); }
+  .alert-green { background: #e8f5e9; border-left: 4px solid var(--sage); }
+  .alert-gold { background: #fff8e1; border-left: 4px solid var(--gold); }
+  .alert-blue { background: #e3f2fd; border-left: 4px solid var(--lavender); }
+  .alert-icon { font-size: 20px; flex-shrink: 0; }
+  .alert-body { font-size: 14px; line-height: 1.6; }
+  .alert-body strong { display: block; margin-bottom: 4px; }
+
+  /* PRICING TABLE */
+  .price-badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 10px;
+  }
+  .price-free { background: #e8f5e9; color: #2e7d32; }
+  .price-low { background: #fff8e1; color: #f57f17; }
+  .price-mid { background: #fff3e0; color: #e65100; }
+  .price-high { background: #fce4ec; color: #c62828; }
+
+  /* OPPORTUNITY VISUAL */
+  .venn {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+  .venn-circle {
+    background: rgba(201,79,109,0.15);
+    border: 2px solid var(--rose);
+    border-radius: 50%;
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--rose);
+    padding: 20px;
+    margin: -20px;
+    line-height: 1.4;
+  }
+  .venn-center {
+    background: rgba(201,79,109,0.35);
+    border-color: var(--rose);
+    color: white;
+    z-index: 2;
+    font-size: 13px;
+  }
+
+  /* FEATURE TABLE */
+  .feature-table { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .feature-col { background: white; border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+  .feature-col h4 { margin: 0 0 12px; }
+  .feature-col li { font-size: 14px; margin-bottom: 6px; }
+  .feature-col.diff { border-color: var(--rose); }
+  .feature-col.diff h4 { color: var(--rose); }
+
+  @media (max-width: 600px) {
+    .slide-inner { padding: 24px 20px 80px; }
+    .slide-header { padding: 16px 20px; }
+    .feature-table { grid-template-columns: 1fr; }
+    .cards { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1: TITLE -->
+  <div class="slide slide-title active" id="s1">
+    <div class="slide-inner">
+      <div class="badge">Competitive Research · March 2026</div>
+      <h1>The <span>Mommy App</span><br>Opportunity</h1>
+      <p>A deep-dive into pregnancy & postpartum apps — what exists, what's missing, and where the gap is.</p>
+      <p class="meta">Prepared by Ava · For Shameen Higney · Higney International</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: MARKET OVERVIEW -->
+  <div class="slide" id="s2">
+    <div class="slide-header">
+      <div class="slide-num">01 · Market Overview</div>
+      <h2>The Landscape</h2>
+      <p>20+ apps compete for the attention of ~3.6M new US mothers per year</p>
+    </div>
+    <div class="slide-inner">
+      <div class="stats">
+        <div class="stat-box"><div class="num">$357M</div><div class="label">Market size today (2025)</div></div>
+        <div class="stat-box"><div class="num">$1.38B</div><div class="label">Projected by 2033</div></div>
+        <div class="stat-box"><div class="num">18.4%</div><div class="label">Annual growth rate</div></div>
+        <div class="stat-box"><div class="num">3.6M</div><div class="label">US births per year</div></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>App</th><th>Platform</th><th>Rating</th><th>Est. Users</th><th>Model</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>BabyCenter</strong></td><td>iOS/Android/Web</td><td>⭐ 4.9 (600K+ reviews)</td><td>10M+</td><td><span class="price-badge price-free">Free (ads)</span></td></tr>
+            <tr><td><strong>What to Expect</strong></td><td>iOS/Android/Web</td><td>⭐ 4.9 (500K+ reviews)</td><td>15M+</td><td><span class="price-badge price-free">Free (ads)</span></td></tr>
+            <tr><td><strong>Flo</strong></td><td>iOS/Android/Web</td><td>⭐ 4.9 (1M+ reviews)</td><td>380M+ (all users)</td><td><span class="price-badge price-high">$59.99/yr</span></td></tr>
+            <tr><td><strong>Ovia Pregnancy</strong></td><td>iOS/Android</td><td>⭐ 4.9 (200K+ reviews)</td><td>~10M</td><td><span class="price-badge price-mid">Free via insurer / $49.99/yr</span></td></tr>
+            <tr><td><strong>The Bump</strong></td><td>iOS/Android/Web</td><td>⭐ 4.8 (200K+ reviews)</td><td>~8M</td><td><span class="price-badge price-free">Free (ads)</span></td></tr>
+            <tr><td><strong>Pregnancy+</strong></td><td>iOS/Android</td><td>⭐ 4.8 (300K+ reviews)</td><td>50M+ downloads</td><td><span class="price-badge price-low">$19.99/yr</span></td></tr>
+            <tr><td><strong>Peanut</strong></td><td>iOS/Android</td><td>⭐ 4.6 (100K+ reviews)</td><td>~4M</td><td><span class="price-badge price-free">Free + Plus</span></td></tr>
+            <tr><td><strong>Glow Nurture</strong></td><td>iOS/Android</td><td>⭐ 4.7 (50K+ reviews)</td><td>~5M</td><td><span class="price-badge price-mid">$47.99/yr or $99.99 lifetime</span></td></tr>
+            <tr><td><strong>Huckleberry</strong></td><td>iOS/Android</td><td>⭐ 4.7 (150K+ reviews)</td><td>5M+ families</td><td><span class="price-badge price-high">$59–120/yr</span></td></tr>
+            <tr><td><strong>Wonder Weeks</strong></td><td>iOS/Android</td><td>⭐ 4.5 (80K+ reviews)</td><td>5M+ downloads</td><td><span class="price-badge price-low">$14.99/yr</span></td></tr>
+            <tr><td><strong>Expectful</strong></td><td>iOS/Android</td><td>⭐ 4.8 (10K+ reviews)</td><td>~500K</td><td><span class="price-badge price-mid">$60/yr</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: WHAT WORKS -->
+  <div class="slide" id="s3">
+    <div class="slide-header">
+      <div class="slide-num">02 · Success Patterns</div>
+      <h2>What Makes Apps Stick</h2>
+      <p>Common retention mechanics and core value propositions</p>
+    </div>
+    <div class="slide-inner">
+      <div class="cards">
+        <div class="card">
+          <h4>🏘️ Birth Month Groups</h4>
+          <p>BabyCenter & WTE's #1 retention driver. 80–90K women per group, all due same month. Shared timeline creates unbreakable bond.</p>
+        </div>
+        <div class="card">
+          <h4>👶 3D Baby Visuals</h4>
+          <p>Week-by-week 3D models of baby's development. Emotionally compelling — moms share screenshots everywhere.</p>
+        </div>
+        <div class="card">
+          <h4>📊 Health Tracking</h4>
+          <p>Ovia's daily logs, mood tracking, and health screeners create habit loops. Data investment keeps users loyal.</p>
+        </div>
+        <div class="card">
+          <h4>🤝 Social Matching</h4>
+          <p>Peanut's "Tinder for moms" mechanic. 4M users find real friends. Community IS the product — not a feature.</p>
+        </div>
+        <div class="card">
+          <h4>😴 Sleep Predictions</h4>
+          <p>Huckleberry's SweetSpot AI predicts ideal nap windows. Parents pay $60–120/yr because it works.</p>
+        </div>
+        <div class="card">
+          <h4>🧘 Daily Meditation</h4>
+          <p>Expectful's purpose-built meditations for the maternal journey. Best mental health continuity of any app.</p>
+        </div>
+        <div class="card">
+          <h4>📅 Daily Tips</h4>
+          <p>All top apps push daily "what's happening this week" content. Regular touchpoints = regular opens.</p>
+        </div>
+        <div class="card">
+          <h4>🆓 Fully Free</h4>
+          <p>BabyCenter, WTE, The Bump are 100% free. No paywall = zero barrier to adoption. Ad-supported.</p>
+        </div>
+      </div>
+      <div class="alert alert-gold">
+        <div class="alert-icon">💡</div>
+        <div class="alert-body"><strong>Key insight from Reddit</strong> Community is the #1 retention driver — but open forums create toxicity. BabyCenter rated 1.8★ on Sitejabber. Users are begging for smaller, values-aligned communities.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: COMPLAINTS -->
+  <div class="slide" id="s4">
+    <div class="slide-header">
+      <div class="slide-num">03 · User Pain Points</div>
+      <h2>What Users Hate</h2>
+      <p>Themes from App Store reviews, Reddit, and Trustpilot</p>
+    </div>
+    <div class="slide-inner">
+      <h3>Universal Complaints Across All Apps</h3>
+      <div class="cards">
+        <div class="card">
+          <h4>📚 Information Overload</h4>
+          <p>"Too much content — I just want to know what to DO today." No app gives a simple daily action guide.</p>
+        </div>
+        <div class="card">
+          <h4>💸 Aggressive Paywalls</h4>
+          <p>Flo: "Every few minutes it prompts me to buy premium." Features that used to be free are now locked.</p>
+        </div>
+        <div class="card">
+          <h4>🔐 Data Privacy Fears</h4>
+          <p>Post-Roe anxiety. Ovia criticized for employer data access. Users scared of pregnancy data being shared.</p>
+        </div>
+        <div class="card">
+          <h4>💔 Abandoned After Birth</h4>
+          <p>"After birth, I had no use for the app." Pregnancy ends → app becomes useless or pivots to baby-only.</p>
+        </div>
+      </div>
+
+      <h3>Community Toxicity</h3>
+      <blockquote>"BabyCenter birth clubs tend to be quite dramatic and toxic."</blockquote>
+      <blockquote>"The WTE forums drove me INSANE — completely unmoderated."</blockquote>
+      <blockquote>"Users recommend deleting the apps and using Reddit instead."</blockquote>
+      <p><strong>BabyCenter Sitejabber rating: 1.8/5 stars</strong> (221 reviews) — stark contrast to 4.9 App Store rating.</p>
+
+      <h3>Wonder Weeks Pricing Backlash</h3>
+      <div class="alert alert-red">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-body"><strong>"Used to be $5, now a subscription. Feels like a cash grab."</strong> Moving from one-time purchase to subscription is deeply unpopular with this audience. Lifetime options are loved.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: PRICING -->
+  <div class="slide" id="s5">
+    <div class="slide-header">
+      <div class="slide-num">04 · Pricing Analysis</div>
+      <h2>What People Pay (and What They Hate)</h2>
+      <p>Competitive pricing breakdown across all major apps</p>
+    </div>
+    <div class="slide-inner">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>App</th><th>Monthly</th><th>Annual</th><th>Lifetime</th><th>Behind Paywall</th><th>Sentiment</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>BabyCenter</strong></td><td>—</td><td>—</td><td>—</td><td>Nothing (fully free)</td><td>✅ Positive</td></tr>
+            <tr><td><strong>What to Expect</strong></td><td>—</td><td>—</td><td>—</td><td>Nothing (fully free)</td><td>✅ Positive</td></tr>
+            <tr><td><strong>The Bump</strong></td><td>—</td><td>—</td><td>—</td><td>Nothing (fully free)</td><td>✅ Very positive</td></tr>
+            <tr><td><strong>Pregnancy+</strong></td><td>$3.99</td><td>$19.99</td><td>—</td><td>3D models, ad-free</td><td>✅ Reasonable</td></tr>
+            <tr><td><strong>Glow Nurture</strong></td><td>$7.99</td><td>$47.99</td><td>$99.99</td><td>AI insights, premium content</td><td>✅ Lifetime liked</td></tr>
+            <tr><td><strong>Sprout</strong></td><td>$4.99</td><td>$29.99</td><td>—</td><td>Full 3D, timeline</td><td>✅ Fair</td></tr>
+            <tr><td><strong>Expectful</strong></td><td>—</td><td>$60</td><td>—</td><td>All meditations</td><td>⚠️ Mixed</td></tr>
+            <tr><td><strong>Ovia</strong></td><td>$9.99</td><td>$49.99</td><td>—</td><td>Premium content (often free via insurer)</td><td>⚠️ Mixed</td></tr>
+            <tr><td><strong>Huckleberry</strong></td><td>$5–10</td><td>$59–120</td><td>—</td><td>SweetSpot predictions</td><td>⚠️ Mixed</td></tr>
+            <tr><td><strong>Flo</strong></td><td>$12.99</td><td>$59.99</td><td>—</td><td>AI, insights, predictions</td><td>❌ Negative — paywalled features</td></tr>
+            <tr><td><strong>Wonder Weeks</strong></td><td>$3.99</td><td>$14.99</td><td>Formerly $4.99</td><td>All leap content</td><td>❌ Backlash — was one-time</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Pricing Insights</h3>
+      <ul>
+        <li><strong>Free/ad-supported dominates market share</strong> — the big 3 (BabyCenter, WTE, Bump) are all free</li>
+        <li><strong>$50–60/year</strong> is the premium sweet spot — but users compare and resist if value isn't clear</li>
+        <li><strong>Lifetime options are beloved</strong> — aligns with the finite nature of the journey</li>
+        <li><strong>Subscription fatigue is real</strong> — moms have 3+ apps and won't pay for all of them</li>
+        <li><strong>FSA/HSA eligibility</strong> (Flo's approach) is smart — shifts the mental cost frame</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: POSTPARTUM GAP -->
+  <div class="slide" id="s6">
+    <div class="slide-header">
+      <div class="slide-num">05 · Critical Gap #1</div>
+      <h2>The Postpartum Abandonment Problem</h2>
+      <p>The single biggest gap across the entire market</p>
+    </div>
+    <div class="slide-inner">
+      <div class="gap-box">
+        <div class="cross">💔</div>
+        <h3>Baby is born. Mom is forgotten.</h3>
+        <p>Every pregnancy app either abandons moms after birth, pivots entirely to baby tracking, or forces them to download a completely new app — losing all the relationship and data built over 9 months.</p>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>App</th><th>Postpartum Coverage</th><th>Grade</th></tr></thead>
+          <tbody>
+            <tr><td>BabyCenter</td><td>Switches to baby milestones; mom recovery = afterthought</td><td>C</td></tr>
+            <tr><td>What to Expect</td><td>Birth month groups continue; minimal mom recovery content</td><td>C+</td></tr>
+            <tr><td>Ovia</td><td>Dedicated postpartum mode; mood tracking; some recovery content</td><td>B–</td></tr>
+            <tr><td>The Bump</td><td>Extends to baby's first year; mom-focused content minimal</td><td>C</td></tr>
+            <tr><td>Flo</td><td>Returns to period tracking mode; pregnancy content stops entirely</td><td>D</td></tr>
+            <tr><td>Expectful</td><td>Postpartum meditation content; best mental health continuity</td><td>B+</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>What's Missing in Postpartum</h3>
+      <ul>
+        <li>❌ Physical recovery tracking (bleeding timeline, pelvic floor, C-section milestones)</li>
+        <li>❌ Daily PPD/PPA monitoring — not just a one-time screener</li>
+        <li>❌ Simple daily guide: "Here's what to do today, Day 14 postpartum"</li>
+        <li>❌ Body normalization: what's normal, what's not, week by week</li>
+        <li>❌ Relationship and identity shifts — partner dynamics, return-to-work anxiety</li>
+        <li>❌ Holistic postpartum recovery — healing foods, rest traditions, spiritual renewal</li>
+      </ul>
+      <blockquote>"During pregnancy, we're cared for and monitored. But once we give birth, it's like the world forgets us."</blockquote>
+      <blockquote>"I was using a pregnancy app and was really disappointed that after birth I had no use of it."</blockquote>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: CRUNCHY GAP -->
+  <div class="slide" id="s7">
+    <div class="slide-header">
+      <div class="slide-num">06 · Critical Gap #2</div>
+      <h2>The Crunchy/Natural Mom Gap</h2>
+      <p>An audience of 500K–900K new moms/year with zero real app serving them</p>
+    </div>
+    <div class="slide-inner">
+      <div class="alert alert-red">
+        <div class="alert-icon">🌿</div>
+        <div class="alert-body"><strong>Mama Natural: ~2 million monthly web visitors</strong> with no app. This proves massive demand exists — and nobody has captured it in an app.</div>
+      </div>
+
+      <h3>How Mainstream Apps Alienate Crunchy Moms</h3>
+      <div class="cards">
+        <div class="card">
+          <h4>💉 Vaccine Schedule Push</h4>
+          <p>CDC schedule presented as default with no alternative view, no opt-out, no nuance.</p>
+        </div>
+        <div class="card">
+          <h4>🏥 Hospital-Only Lens</h4>
+          <p>Birth center and homebirth options marginalized. OB-GYN assumed — midwives barely mentioned.</p>
+        </div>
+        <div class="card">
+          <h4>🍼 Formula as Co-Equal</h4>
+          <p>Apps treat formula and breastfeeding as equal defaults. Natural-feeding moms feel unsupported.</p>
+        </div>
+        <div class="card">
+          <h4>💊 Medicalised Framing</h4>
+          <p>All health content is conventional medicine. No herbal remedies, no natural alternatives mentioned.</p>
+        </div>
+      </div>
+
+      <h3>Content That Doesn't Exist in Any Major App</h3>
+      <ul>
+        <li>❌ Elimination Communication (EC) — zero coverage anywhere</li>
+        <li>❌ Babywearing guides</li>
+        <li>❌ Natural birth preparation (hypnobirthing, breathing, water birth)</li>
+        <li>❌ Homebirth / birth center content</li>
+        <li>❌ Cloth diapering</li>
+        <li>❌ Herbal pregnancy remedies (red raspberry leaf, EPO, etc.)</li>
+        <li>❌ Non-toxic product guidance (clean nursery, organic food)</li>
+        <li>❌ Extended breastfeeding beyond 12 months</li>
+        <li>❌ Delayed cord clamping, placenta encapsulation, lotus birth</li>
+        <li>❌ Traditional postpartum healing practices</li>
+      </ul>
+
+      <div class="alert alert-green">
+        <div class="alert-icon">✅</div>
+        <div class="alert-body"><strong>The crunchy community today relies on:</strong> Facebook groups (fragmented, unmoderated), Instagram accounts (not actionable), Mama Natural's email series (not an app), and books. There is no daily companion app for this audience. Wide open.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: FAITH GAP -->
+  <div class="slide" id="s8">
+    <div class="slide-header">
+      <div class="slide-num">07 · Critical Gap #3</div>
+      <h2>The Faith-Based Gap</h2>
+      <p>~2.3 million Christian moms born each year in the US — with zero apps meaningfully serving them</p>
+    </div>
+    <div class="slide-inner">
+      <div class="stats">
+        <div class="stat-box"><div class="num">65%</div><div class="label">of Americans identify as Christian (Pew 2023)</div></div>
+        <div class="stat-box"><div class="num">2.3M</div><div class="label">Christian moms born per year in US</div></div>
+        <div class="stat-box"><div class="num">$100M+</div><div class="label">Revenue from faith apps (Hallow, Pray.com, YouVersion) — proves willingness to pay</div></div>
+        <div class="stat-box"><div class="num">0</div><div class="label">Mainstream apps with real faith integration</div></div>
+      </div>
+
+      <h3>What Exists (It's Not Enough)</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>App</th><th>Faith Tradition</th><th>Limitation</th></tr></thead>
+          <tbody>
+            <tr><td>Made for This Birth</td><td>Catholic (Theology of the Body)</td><td>Catholic-specific; no postpartum; tiny user base</td></tr>
+            <tr><td>Christian Hypnobirthing</td><td>Non-denom Christian</td><td>Birth-prep only; no tracking; no postpartum</td></tr>
+            <tr><td>Pregnancy Prayers App</td><td>Non-denom Christian</td><td>Prayer-only; no tracking; very basic; buggy</td></tr>
+            <tr><td>Pregnancy Prayers Daily</td><td>Non-denom Christian</td><td>Buggy; 3.5★; poor reviews; repeating content</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>What Christian Moms Say They Want</h3>
+      <ul>
+        <li>Daily devotionals/prayers tied to their specific pregnancy week or postpartum day</li>
+        <li>Scripture for anxious moments — labor, sleepless nights, PPD struggles</li>
+        <li>A community with other believing moms — without the secular forum toxicity</li>
+        <li>Content that acknowledges God's design for birth and motherhood</li>
+        <li>Postpartum support that integrates spiritual wellness, not just physical</li>
+        <li>A place where faith isn't sidelined or treated as "alternative"</li>
+      </ul>
+      <blockquote>"I'm having a hard time connecting with anyone when it comes to postpartum issues. I can't find anyone who shares my faith perspective." — Reddit, r/beyondthebump</blockquote>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: COMMUNITY -->
+  <div class="slide" id="s9">
+    <div class="slide-header">
+      <div class="slide-num">08 · Community</div>
+      <h2>Why Community Is the Secret Weapon</h2>
+      <p>And why every major app is getting it wrong</p>
+    </div>
+    <div class="slide-inner">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>App</th><th>Community Type</th><th>Scale</th><th>Sentiment</th></tr></thead>
+          <tbody>
+            <tr><td>BabyCenter</td><td>Birth clubs + topic forums</td><td>80K+ per month group</td><td>❌ "Toxic, dramatic, judgmental"</td></tr>
+            <tr><td>What to Expect</td><td>Birth month groups + forums</td><td>90K+ per month group</td><td>❌ "Drove me insane, unmoderated"</td></tr>
+            <tr><td>Peanut</td><td>1:1 matching + group discussions</td><td>4M+ users</td><td>✅ Best sentiment of any app</td></tr>
+            <tr><td>Ovia</td><td>In-app Q&A, targeted posts</td><td>Moderate</td><td>✅ Better because targeted by condition</td></tr>
+            <tr><td>Flo</td><td>Anonymous sharing / stories</td><td>Large but shallow</td><td>⚠️ Impersonal</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="alert alert-red">
+        <div class="alert-icon">🔥</div>
+        <div class="alert-body"><strong>Reddit is beating every pregnancy app at community.</strong> Multiple users recommend deleting BabyCenter/WTE and using r/BabyBumps or r/beyondthebump instead. That's how badly apps are failing here.</div>
+      </div>
+
+      <h3>The Formula for Good Community</h3>
+      <div class="cards">
+        <div class="card">
+          <h4>Small > Big</h4>
+          <p>50–200 women per cohort, not 80,000 strangers. Shared context = real connection.</p>
+        </div>
+        <div class="card">
+          <h4>Values-Aligned</h4>
+          <p>Natural + faith-based community self-selects for kindness. No clash between mainstream and crunchy worldviews.</p>
+        </div>
+        <div class="card">
+          <h4>Moderated</h4>
+          <p>Active moderation for respect — the #1 complaint about every major app is lack of moderation.</p>
+        </div>
+        <div class="card">
+          <h4>Month-Based Cohorts</h4>
+          <p>Birth month groups work because of shared timeline. Keep this — just make them smaller and safer.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: OPPORTUNITY -->
+  <div class="slide" id="s10">
+    <div class="slide-header">
+      <div class="slide-num">09 · The Opportunity</div>
+      <h2>The Gap Nobody Has Filled</h2>
+      <p>Three underserved audiences — one intersection — zero competition</p>
+    </div>
+    <div class="slide-inner">
+      <div class="gap-box">
+        <h3>🎯 The Unoccupied Territory</h3>
+        <p style="margin-bottom:16px">Faith-based + Natural/Crunchy + Postpartum Daily Guide = <strong style="color:var(--gold)">zero apps exist here</strong></p>
+        <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-top:16px">
+          <div style="text-align:center; color:rgba(255,255,255,0.8)"><div style="font-size:32px">🌿</div><div style="font-size:14px; margin-top:4px">Natural/Crunchy<br><small style="opacity:0.6">500K–900K moms/yr</small></div></div>
+          <div style="text-align:center; color:var(--gold)"><div style="font-size:40px">✨</div><div style="font-size:16px; font-weight:700; margin-top:4px">THIS APP</div></div>
+          <div style="text-align:center; color:rgba(255,255,255,0.8)"><div style="font-size:32px">✝️</div><div style="font-size:14px; margin-top:4px">Faith-Based<br><small style="opacity:0.6">2.3M moms/yr</small></div></div>
+        </div>
+        <div style="text-align:center; margin-top:24px; color:rgba(255,255,255,0.8)"><div style="font-size:32px">💛</div><div style="font-size:14px">Postpartum Daily Guide<br><small style="opacity:0.6">3.6M moms/yr — all abandoned after birth</small></div></div>
+      </div>
+
+      <h3>Why This App Wins</h3>
+      <ul>
+        <li><strong>Simplicity as the differentiator</strong> — Every competitor is an information dump. This is a daily action guide. Open → do 5 things → close.</li>
+        <li><strong>Only app at the intersection</strong> — Faith + natural + postpartum = zero competition</li>
+        <li><strong>Community moat</strong> — Values-aligned community creates loyalty no mainstream app can match</li>
+        <li><strong>Mom-first, not baby-first</strong> — Revolutionary positioning. Most apps forget the mom exists after birth.</li>
+        <li><strong>Lifecycle continuity</strong> — Pregnancy → postpartum → first year in ONE experience. No app-hopping.</li>
+        <li><strong>Trust advantage</strong> — Privacy-first, faith-driven mission beats corporate giants for this audience</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: IDEAL APP -->
+  <div class="slide" id="s11">
+    <div class="slide-header">
+      <div class="slide-num">10 · Product Vision</div>
+      <h2>What the Ideal App Looks Like</h2>
+      <p>Features, phases, and differentiators</p>
+    </div>
+    <div class="slide-inner">
+      <div class="alert alert-blue">
+        <div class="alert-icon">📱</div>
+        <div class="alert-body"><strong>Core experience: "Your Daily Guide"</strong> Open app → see TODAY'S screen: 3–5 simple actions, one devotional, one body check, one encouragement. Not 47 articles. Just: what do I do right now.</div>
+      </div>
+
+      <h3>Phase Coverage</h3>
+      <ul>
+        <li>🤰 <strong>Pregnancy</strong> — Week-by-week daily actions, phase-gated content, milestones</li>
+        <li>👶 <strong>Fourth Trimester / Postpartum</strong> — Day-by-day for first 90 days, then weekly. Mom-centered.</li>
+        <li>🌱 <strong>Baby's First Year</strong> — Developmental milestones integrated with mom's recovery journey</li>
+      </ul>
+
+      <div class="feature-table">
+        <div class="feature-col">
+          <h4>🟦 Table Stakes (Must Have)</h4>
+          <ul>
+            <li>Week-by-week pregnancy tracking</li>
+            <li>Baby size/development visuals</li>
+            <li>Due date countdown</li>
+            <li>Symptom logging</li>
+            <li>Push notification reminders</li>
+            <li>Contraction timer</li>
+            <li>Basic baby tracking post-birth</li>
+            <li>Mobile-first (iOS + Android)</li>
+          </ul>
+        </div>
+        <div class="feature-col diff">
+          <h4>🌟 Differentiators (Unique Value)</h4>
+          <ul>
+            <li>Daily action guide (not articles)</li>
+            <li>Faith integration — prayers, scripture, devotionals</li>
+            <li>Natural/crunchy content lens throughout</li>
+            <li>Postpartum day-by-day recovery guide</li>
+            <li>Mom-centered (not baby-only after birth)</li>
+            <li>Values-aligned curated community</li>
+            <li>Postpartum physical recovery milestones</li>
+            <li>PPD/PPA daily gentle check-ins</li>
+            <li>EC, babywearing, natural birth content</li>
+            <li>Privacy-first (minimal data collection)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: PRICING REC -->
+  <div class="slide" id="s12">
+    <div class="slide-header">
+      <div class="slide-num">11 · Pricing Recommendation</div>
+      <h2>What to Charge</h2>
+      <p>Based on competitive analysis and audience characteristics</p>
+    </div>
+    <div class="slide-inner">
+      <div class="stats">
+        <div class="stat-box"><div class="num">Free</div><div class="label">Basic daily guide + pregnancy tracking</div></div>
+        <div class="stat-box"><div class="num">$4.99<small style="font-size:16px">/mo</small></div><div class="label">Monthly premium</div></div>
+        <div class="stat-box"><div class="num">$39.99<small style="font-size:16px">/yr</small></div><div class="label">Annual — below Flo/Ovia backlash threshold</div></div>
+        <div class="stat-box"><div class="num">$79.99</div><div class="label">Lifetime — covers pregnancy + first year. No recurring guilt.</div></div>
+      </div>
+
+      <h3>Why This Works</h3>
+      <ul>
+        <li>Below the $50–60/yr threshold where backlash starts</li>
+        <li><strong>Lifetime aligns with the journey</strong> — pregnancy + 1 year = finite. Moms appreciate not paying forever for something with a natural end date.</li>
+        <li>Faith-based audience expects value-aligned pricing — not corporate extraction</li>
+        <li>Freemium free tier removes barrier to entry; daily guide creates daily habit</li>
+        <li>Premium paywall: full devotionals, all postpartum content, community access, partner sharing</li>
+      </ul>
+
+      <div class="alert alert-green">
+        <div class="alert-icon">💡</div>
+        <div class="alert-body"><strong>Future move:</strong> FSA/HSA eligibility. Flo cracked this — it reframes the mental cost entirely. "My health plan pays for it" unlocks a completely different willingness to pay.</div>
+      </div>
+
+      <h3>What's Behind the Paywall</h3>
+      <ul>
+        <li>Full daily devotionals + scripture + prayers (all stages)</li>
+        <li>Complete postpartum day-by-day recovery guide</li>
+        <li>Values-aligned community cohort access</li>
+        <li>Partner/caregiver shared view</li>
+        <li>Full crunchy content library (EC, babywearing, natural birth, etc.)</li>
+        <li>PPD/PPA daily check-ins with guidance</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: SUMMARY -->
+  <div class="slide" id="s13">
+    <div class="slide-header">
+      <div class="slide-num">12 · Summary</div>
+      <h2>TL;DR — The Case for Building This</h2>
+      <p>Everything you need to know in one slide</p>
+    </div>
+    <div class="slide-inner">
+      <div class="cards">
+        <div class="card">
+          <h4>📊 Market</h4>
+          <p>$357M → $1.38B by 2033. 3.6M US births/year. Growing fast.</p>
+        </div>
+        <div class="card">
+          <h4>🎯 Audience</h4>
+          <p>2.3M Christian moms/yr + 500K–900K crunchy moms/yr. Both underserved. Both willing to pay for values-aligned products.</p>
+        </div>
+        <div class="card">
+          <h4>🏆 Competition</h4>
+          <p>Zero apps at the intersection of faith + natural + postpartum daily guide. This space is wide open.</p>
+        </div>
+        <div class="card">
+          <h4>💔 The Core Problem</h4>
+          <p>Every app dumps information. Moms are drowning. Nobody gives a simple daily guide. Nobody continues past birth.</p>
+        </div>
+        <div class="card">
+          <h4>💡 The Differentiator</h4>
+          <p>Simplicity + faith + natural lens + postpartum continuity. Mom-first. Not baby-first. Daily companion, not encyclopedia.</p>
+        </div>
+        <div class="card">
+          <h4>💰 Revenue</h4>
+          <p>$39.99/yr or $79.99 lifetime. Freemium with generous free tier. FSA/HSA eligible (future). Lean pricing = loyalty.</p>
+        </div>
+      </div>
+
+      <div class="gap-box" style="margin-top:24px">
+        <h3>The One-Sentence Pitch</h3>
+        <p style="font-size:18px; color:white; line-height:1.7; margin-top:8px">"The only daily companion for <strong style="color:var(--gold)">faith-based, natural-minded moms</strong> — from pregnancy through your baby's first year — that doesn't forget you exist after birth."</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- NAVIGATION -->
+<div class="nav">
+  <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+  <div class="nav-dots" id="dots"></div>
+  <span class="nav-counter" id="counter">1 / 13</span>
+  <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const dotsEl = document.getElementById('dots');
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('span');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  }
+
+  function render() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    document.getElementById('counter').textContent = `${current + 1} / ${total}`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === total - 1;
+    document.querySelectorAll('#dots span').forEach((d, i) => d.classList.toggle('active', i === current));
+    // scroll inner to top on slide change
+    const inner = slides[current].querySelector('.slide-inner');
+    if (inner) inner.scrollTop = 0;
+  }
+
+  function goTo(i) { current = Math.max(0, Math.min(total - 1, i)); render(); }
+  function changeSlide(dir) { goTo(current + dir); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+  });
+
+  // Touch/swipe support
+  let touchX = 0;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const diff = touchX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+  });
+
+  render();
+</script>
+</body>
+</html>
